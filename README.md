@@ -2,9 +2,14 @@
 
 A Salesforce utility-bar agent that tells SDRs **which lead to chase**. Open a Lead, click **Analyze Lead**, and Claude returns a conversion score (0–100), YES / NO / MAYBE, signals, and next steps — without leaving the CRM.
 
-This repo is the working metadata from the walkthrough:
+This repo is the working metadata from the walkthrough.
 
-**[Build an AI agent inside Salesforce that tells SDRs which lead to chase](https://www.apexhours.com/build-an-ai-agent-inside-salesforce-that-tells-sdrs-which-lead-to-chase/)** — Apex Hours, Lakshmikanth Paruchuru
+### Walkthrough
+
+- **Blog:** [Build an AI agent inside Salesforce that tells SDRs which lead to chase](https://www.apexhours.com/build-an-ai-agent-inside-salesforce-that-tells-sdrs-which-lead-to-chase/) — Apex Hours, Lakshmikanth Paruchuru
+- **YouTube:** [Watch the demo](https://www.youtube.com/watch?v=s0YCmg8M4CU&t=1161s) (starts at the SDR agent segment)
+
+[![Watch the YouTube demo](https://img.youtube.com/vi/s0YCmg8M4CU/maxresdefault.jpg)](https://www.youtube.com/watch?v=s0YCmg8M4CU&t=1161s)
 
 > **Never commit a real Anthropic key.** Every credential file in this repo uses the placeholder `<Your API Key>`.
 
@@ -259,4 +264,7 @@ Model used in Apex: `claude-sonnet-4-5-20250929`. Timeout is 120 seconds.
 
 ## License
 
-Sample code for learning and reuse. Walkthrough: [Apex Hours article](https://www.apexhours.com/build-an-ai-agent-inside-salesforce-that-tells-sdrs-which-lead-to-chase/).
+Sample code for learning and reuse.
+
+- Blog: [Apex Hours article](https://www.apexhours.com/build-an-ai-agent-inside-salesforce-that-tells-sdrs-which-lead-to-chase/)
+- YouTube: [Demo video](https://www.youtube.com/watch?v=s0YCmg8M4CU&t=1161s)
