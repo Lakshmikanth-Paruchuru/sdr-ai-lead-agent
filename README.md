@@ -11,8 +11,6 @@ This repo is the working metadata from the walkthrough.
 
 [![Watch the YouTube demo](https://img.youtube.com/vi/s0YCmg8M4CU/maxresdefault.jpg)](https://www.youtube.com/watch?v=s0YCmg8M4CU&t=1161s)
 
-> **Never commit a real Anthropic key.** Every credential file in this repo uses the placeholder `<Your API Key>`.
-
 ---
 
 ## What it looks like
