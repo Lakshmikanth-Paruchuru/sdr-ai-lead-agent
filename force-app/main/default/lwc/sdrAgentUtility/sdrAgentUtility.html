@@ -1,0 +1,182 @@
+<template>
+    <div class="sdr-agent-container">
+        <!-- Header -->
+        <div class="slds-page-header">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="standard:einstein" alternative-text="SDR Agent" size="medium"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span class="slds-page-header__title slds-truncate" title="SDR Agent">SDR AI Agent</span>
+                                    </h1>
+                                </div>
+                            </div>
+                            <p class="slds-page-header__name-meta">AI-Powered Lead Conversion Analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lead Selection -->
+        <div class="slds-p-around_medium">
+            <lightning-card title="Select Lead to Analyze">
+                <div class="slds-p-around_medium">
+                    <!-- Always show the record picker; pre-populated with current Lead when on a Lead page -->
+                    <lightning-record-picker
+                        label="Lead"
+                        placeholder="Search for a lead..."
+                        object-api-name="Lead"
+                        onchange={handleLeadSelection}
+                        value={selectedLeadId}
+                    ></lightning-record-picker>
+
+                    <div class="slds-m-top_medium">
+                        <lightning-button
+                            variant="brand"
+                            label="Analyze Lead"
+                            title="Analyze Lead with AI"
+                            onclick={handleAnalyzeLead}
+                            disabled={isAnalyzing}
+                            icon-name="utility:einstein"
+                        ></lightning-button>
+                    </div>
+
+                    <template if:true={isAnalyzing}>
+                        <div class="slds-m-top_medium">
+                            <lightning-spinner alternative-text="Analyzing lead..." size="small"></lightning-spinner>
+                            <p class="slds-text-align_center slds-m-top_small">Analyzing lead with Claude AI...</p>
+                        </div>
+                    </template>
+                </div>
+            </lightning-card>
+        </div>
+
+        <!-- Analysis Results -->
+        <template if:true={analysisResult}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                <!-- Score Card -->
+                <lightning-card title="Conversion Analysis" icon-name="standard:metrics">
+                    <div class="slds-p-around_medium">
+                        <!-- Conversion Score -->
+                        <div class="score-container slds-text-align_center slds-p-bottom_medium">
+                            <div class={scoreClass}>
+                                <h1 class="slds-text-heading_large">{analysisResult.conversionScore}</h1>
+                                <p class="slds-text-body_small">Conversion Score</p>
+                            </div>
+                        </div>
+
+                        <!-- Recommendation Badge -->
+                        <div class="slds-text-align_center slds-p-vertical_medium">
+                            <lightning-badge label={recommendationLabel} class={recommendationClass}></lightning-badge>
+                            <lightning-badge label={analysisResult.engagementLevel} class="engagement-badge slds-m-left_small"></lightning-badge>
+                        </div>
+
+                        <!-- Summary -->
+                        <div class="slds-p-vertical_medium">
+                            <h3 class="slds-text-heading_small slds-m-bottom_small">Summary</h3>
+                            <p class="slds-text-body_regular">{analysisResult.summary}</p>
+                        </div>
+
+                        <!-- Engagement Analysis -->
+                        <template if:true={analysisResult.engagementAnalysis}>
+                            <div class="slds-p-vertical_medium">
+                                <h3 class="slds-text-heading_small slds-m-bottom_small">Engagement Analysis</h3>
+                                <p class="slds-text-body_regular">{analysisResult.engagementAnalysis}</p>
+                            </div>
+                        </template>
+                    </div>
+                </lightning-card>
+
+                <!-- Signals and Insights -->
+                <div class="slds-grid slds-wrap slds-gutters slds-m-top_medium">
+                    <!-- Positive Signals -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                        <lightning-card title="Positive Signals" icon-name="utility:success">
+                            <div class="slds-p-around_medium">
+                                <template if:true={hasPositiveSignals}>
+                                    <ul class="slds-list_dotted">
+                                        <template for:each={analysisResult.positiveSignals} for:item="signal">
+                                            <li key={signal} class="slds-p-vertical_x-small">
+                                                <lightning-icon icon-name="utility:check" size="xx-small" class="slds-m-right_x-small positive-icon"></lightning-icon>
+                                                {signal}
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </template>
+                                <template if:false={hasPositiveSignals}>
+                                    <p class="slds-text-color_weak">No positive signals identified</p>
+                                </template>
+                            </div>
+                        </lightning-card>
+                    </div>
+
+                    <!-- Negative Signals -->
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                        <lightning-card title="Risk Factors" icon-name="utility:warning">
+                            <div class="slds-p-around_medium">
+                                <template if:true={hasNegativeSignals}>
+                                    <ul class="slds-list_dotted">
+                                        <template for:each={analysisResult.negativeSignals} for:item="signal">
+                                            <li key={signal} class="slds-p-vertical_x-small">
+                                                <lightning-icon icon-name="utility:warning" size="xx-small" class="slds-m-right_x-small warning-icon"></lightning-icon>
+                                                {signal}
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </template>
+                                <template if:false={hasNegativeSignals}>
+                                    <p class="slds-text-color_weak">No risk factors identified</p>
+                                </template>
+                            </div>
+                        </lightning-card>
+                    </div>
+                </div>
+
+                <!-- Next Steps -->
+                <template if:true={hasNextSteps}>
+                    <lightning-card title="Recommended Next Steps" icon-name="utility:steps" class="slds-m-top_medium">
+                        <div class="slds-p-around_medium">
+                            <ol class="slds-list_ordered">
+                                <template for:each={analysisResult.nextSteps} for:item="step" for:index="index">
+                                    <li key={step} class="slds-p-vertical_x-small">
+                                        <strong>Step {index}:</strong> {step}
+                                    </li>
+                                </template>
+                            </ol>
+                        </div>
+                    </lightning-card>
+                </template>
+
+                <!-- Additional Risk Factors -->
+                <template if:true={hasRiskFactors}>
+                    <lightning-card title="Additional Considerations" icon-name="utility:info" class="slds-m-top_medium">
+                        <div class="slds-p-around_medium">
+                            <ul class="slds-list_dotted">
+                                <template for:each={analysisResult.riskFactors} for:item="risk">
+                                    <li key={risk} class="slds-p-vertical_x-small">{risk}</li>
+                                </template>
+                            </ul>
+                        </div>
+                    </lightning-card>
+                </template>
+            </div>
+        </template>
+
+        <!-- Error Message -->
+        <template if:true={errorMessage}>
+            <div class="slds-p-horizontal_medium">
+                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                    <span class="slds-assistive-text">error</span>
+                    <lightning-icon icon-name="utility:error" size="small" variant="inverse" class="slds-m-right_small"></lightning-icon>
+                    <h2>{errorMessage}</h2>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>
